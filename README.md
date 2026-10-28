@@ -104,8 +104,7 @@ Les données ne sont pas actualisées automatiquement. Pour obtenir les prix du 
 ## Limites et pistes futures
 
 * Le fichier ne s’actualise pas automatiquement en arrière-plan, il est donc nécessaire de relancer le script chaque jour, ce qui est une piste d’amélioration
-* Le script en l’état actuel ne stocke pas les données futures, mais écrit sur ces données, l’idée future est qu’il réalise une mise à jour via un merge de csv 
-* A l’heure actuelle le fichier ne donne que les prix du gazole, une mise à jour future sera dédiée à incorporer le prix du SP95 et des autres types de carburant, tout en ajoutant un sélecteur dans le dashboard (tout comme pour les dates)
+* A l’heure actuelle le fichier ne donne que les prix du gazole, une mise à jour future sera dédiée à incorporer le prix du SP95 et des autres types de carburant, tout en ajoutant un sélecteur dans le dashboard
 
 Ainsi, les futures mise à jour de ce script auront pour objectif d'ajouter la possibilité d'obtenir les informations pour les prix de l'essence.
 
