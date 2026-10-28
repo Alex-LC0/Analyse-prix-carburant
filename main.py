@@ -48,6 +48,11 @@ prix_dep = pd.DataFrame(
     prix_dep
 )  # Création d'un dataframe contnenant les prix moyens par départements
 
-prix_dep.to_csv(
-    "prix_carburant.csv"
-)  # Extraction du dataframe dans un fichier csv pour alimenter PowerBI
+prix_dep = prix_dep.reset_index() # Reset des index pour créer un historique de données
+
+try: # Pour le premier lancement du script sur la machine
+    historique = pd.read_csv("prix_carburant.csv") # Ouverture de l'historique
+    maj_data = pd.concat([historique, prix_dep]) # Fusion des anciennes et nouvelles données
+    maj_data.to_csv("prix_carburant.csv") # Création du fichier mis à jour
+except FileNotFoundError as e: # Cadre où le fichier historique n'existe pas encore
+    prix_dep.to_csv("prix_carburant.csv") # Création des données
