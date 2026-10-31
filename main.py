@@ -67,10 +67,15 @@ prix_dep = prix_dep.reset_index()  # Reset des index pour créer un historique d
 
 try:  # Pour le premier lancement du script sur la machine
     historique = pd.read_csv("prix_carburant.csv")  # Ouverture de l'historique
-    maj_data = pd.concat(
-        [historique, prix_dep]
-    )  # Fusion des anciennes et nouvelles données
-    maj_data.to_csv("prix_carburant.csv", index=False)  # Création du fichier mis à jour
+    if today in historique["gazole_maj"].values:
+        print("Données déjà collectée")
+    else:
+        maj_data = pd.concat(
+            [historique, prix_dep]
+        )  # Fusion des anciennes et nouvelles données
+        maj_data.to_csv(
+            "prix_carburant.csv", index=False
+        )  # Création du fichier mis à jour
 except FileNotFoundError as e:  # Cadre où le fichier historique n'existe pas encore
     prix_dep.to_csv("prix_carburant.csv", index=False)  # Création des données
 
@@ -78,12 +83,15 @@ try:
     historique_commune = pd.read_csv(
         "prix_carburant_commune.csv"
     )  # Ouverture de l'historique
-    maj_data_commune = pd.concat(
-        [historique_commune, prix_commune]
-    )  # Fusion des anciennes et nouvelles données
-    maj_data_commune.to_csv(
-        "prix_carburant_commune.csv", index=False
-    )  # Création du fichier mis à jour
+    if today in historique_commune["gazole_maj"].values:
+        print("Donnée déjà collectée")
+    else:
+        maj_data_commune = pd.concat(
+            [historique_commune, prix_commune]
+        )  # Fusion des anciennes et nouvelles données
+        maj_data_commune.to_csv(
+            "prix_carburant_commune.csv", index=False
+        )  # Création du fichier mis à jour
 except FileNotFoundError as e:  # Cadre où le fichier historique n'existe pas encore
     prix_commune.to_csv(
         "prix_carburant_commune.csv", index=False
@@ -94,6 +102,9 @@ try:  # Création / Mise à jour de la table calendrier
     maj_calendrier = pd.concat(
         [calendrier, date_today]
     )  # Rajout de la date du jour dans l'historique
+    maj_calendrier = (
+        maj_calendrier.drop_duplicates()
+    )  # Suppression des duplicats en cas de double run du script
     maj_calendrier.to_csv("calendrier.csv")
 except FileNotFoundError as e:
     date_today.to_csv("calendrier.csv")  # Création des données non existantes
