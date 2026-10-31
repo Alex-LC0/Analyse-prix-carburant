@@ -56,6 +56,13 @@ prix_commune = pd.DataFrame(
     prix_commune
 )  # Création du dataframe contenant les prix du carburant par commune
 
+date_today = gazole[
+    "gazole_maj"
+].unique()  # Récupération des données de la date du jour
+date_today = pd.DataFrame(
+    date_today, columns=["gazole_maj"]
+)  # Création du dataframe de la date
+
 prix_dep = prix_dep.reset_index()  # Reset des index pour créer un historique de données
 
 try:  # Pour le premier lancement du script sur la machine
@@ -84,13 +91,9 @@ except FileNotFoundError as e:  # Cadre où le fichier historique n'existe pas e
 
 try:  # Création / Mise à jour de la table calendrier
     calendrier = pd.read_csv("calendrier.csv")  # Ouverture de l'historique des dates
-    date_today = gazole["gazole_maj"].unique()
-    date_today = pd.DataFrame(date_today, columns=calendrier.columns)
     maj_calendrier = pd.concat(
         [calendrier, date_today]
     )  # Rajout de la date du jour dans l'historique
     maj_calendrier.to_csv("calendrier.csv")
 except FileNotFoundError as e:
-    date_today = gazole["gazole_maj"].unique()
-    date_today = pd.DataFrame(date_today, columns=calendrier.columns)
-    date_today.to_csv("calendrier.csv")
+    date_today.to_csv("calendrier.csv")  # Création des données non existantes
