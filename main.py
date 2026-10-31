@@ -46,13 +46,51 @@ prix_dep = gazole.groupby(
 ).gazole_prix.mean()  # Calcul des moyennnes des prix du gazole
 prix_dep = pd.DataFrame(
     prix_dep
-)  # Création d'un dataframe contnenant les prix moyens par départements
+)  # Création d'un dataframe contenant les prix moyens par départements
+prix_commune = (
+    gazole.groupby(["code_departement", "ville", "gazole_maj"])
+    .gazole_prix.mean()
+    .reset_index()
+)  # Création d'un regroupement des prix moyens par communes dans les départements
+prix_commune = pd.DataFrame(
+    prix_commune
+)  # Création du dataframe contenant les prix du carburant par commune
 
-prix_dep = prix_dep.reset_index() # Reset des index pour créer un historique de données
+prix_dep = prix_dep.reset_index()  # Reset des index pour créer un historique de données
 
-try: # Pour le premier lancement du script sur la machine
-    historique = pd.read_csv("prix_carburant.csv") # Ouverture de l'historique
-    maj_data = pd.concat([historique, prix_dep]) # Fusion des anciennes et nouvelles données
-    maj_data.to_csv("prix_carburant.csv") # Création du fichier mis à jour
-except FileNotFoundError as e: # Cadre où le fichier historique n'existe pas encore
-    prix_dep.to_csv("prix_carburant.csv") # Création des données
+try:  # Pour le premier lancement du script sur la machine
+    historique = pd.read_csv("prix_carburant.csv")  # Ouverture de l'historique
+    maj_data = pd.concat(
+        [historique, prix_dep]
+    )  # Fusion des anciennes et nouvelles données
+    maj_data.to_csv("prix_carburant.csv", index=False)  # Création du fichier mis à jour
+except FileNotFoundError as e:  # Cadre où le fichier historique n'existe pas encore
+    prix_dep.to_csv("prix_carburant.csv", index=False)  # Création des données
+
+try:
+    historique_commune = pd.read_csv(
+        "prix_carburant_commune.csv"
+    )  # Ouverture de l'historique
+    maj_data_commune = pd.concat(
+        [historique_commune, prix_commune]
+    )  # Fusion des anciennes et nouvelles données
+    maj_data_commune.to_csv(
+        "prix_carburant_commune.csv", index=False
+    )  # Création du fichier mis à jour
+except FileNotFoundError as e:  # Cadre où le fichier historique n'existe pas encore
+    prix_commune.to_csv(
+        "prix_carburant_commune.csv", index=False
+    )  # Création des données
+
+try:  # Création / Mise à jour de la table calendrier
+    calendrier = pd.read_csv("calendrier.csv")  # Ouverture de l'historique des dates
+    date_today = gazole["gazole_maj"].unique()
+    date_today = pd.DataFrame(date_today, columns=calendrier.columns)
+    maj_calendrier = pd.concat(
+        [calendrier, date_today]
+    )  # Rajout de la date du jour dans l'historique
+    maj_calendrier.to_csv("calendrier.csv")
+except FileNotFoundError as e:
+    date_today = gazole["gazole_maj"].unique()
+    date_today = pd.DataFrame(date_today, columns=calendrier.columns)
+    date_today.to_csv("calendrier.csv")
