@@ -114,7 +114,7 @@ prix_commune_sp95 = pd.DataFrame(
 # Traitement des données temporelles
 date_today = carburant[
     "gazole_maj"
-].unique()  # Récupération des données de la date du jour
+].dropna().unique()  # Récupération des données de la date du jour
 date_today = pd.DataFrame(
     date_today, columns=["gazole_maj"]
 )  # Création du dataframe de la date
